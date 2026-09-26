@@ -52,19 +52,20 @@ app.add_middleware(
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
 
-    public_paths = [
-        "/",
-        "/login",
-        "/register",
-        "/docs",
-        "/openapi.json",
-        "/redoc"
-    ]
-
     if request.method == "OPTIONS":
         return await call_next(request)
 
-    if request.url.path in public_paths:
+    path = request.url.path
+
+    # Public routes
+    if (
+        path == "/"
+        or path == "/login"
+        or path == "/register"
+        or path.startswith("/docs")
+        or path.startswith("/openapi.json")
+        or path.startswith("/redoc")
+    ):
         return await call_next(request)
 
     token = request.headers.get("Authorization")
@@ -76,7 +77,7 @@ async def auth_middleware(request: Request, call_next):
         )
 
     if token.startswith("Bearer "):
-        token = token.replace("Bearer ", "", 1)
+        token = token[7:]
 
     payload = decode_access_token(token, "your_secret_key")
 
