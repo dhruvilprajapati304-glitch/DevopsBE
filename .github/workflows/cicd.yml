@@ -6,7 +6,7 @@ on:
       - main
   
 jobs:
-  build and test :
+  build :
     name : Build Project
     runs-on : ubuntu-latest
 
@@ -28,7 +28,7 @@ jobs:
 
   deploy :
     name : Deploy To render
-    needs : build and test
+    needs : build
     runs-on : ubuntu-latest
 
     steps:
